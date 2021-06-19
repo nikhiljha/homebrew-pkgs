@@ -4,22 +4,16 @@ class CypherShell < Formula
   url "https://github.com/neo4j/cypher-shell/releases/download/4.2.2/cypher-shell.zip"
   sha256 "b57623b045a252e3b46f4bb0c7db4bc5ddb080f248bb866fc27023a7c9118b91"
   license "GPL-3.0"
-  revision 1
   version_scheme 1
 
-  bottle :unneeded
-
   depends_on "openjdk@11"
-  
+
   def install
     rm_f Dir["bin/*.bat"]
 
     # Needs the jar, but cannot go in bin
-    share.install ["cypher-shell.jar"]
-
-    # Copy the bin
-    bin.install ["cypher-shell"]
-    bin.env_script_all_files(share, NEO4J_HOME: ENV["NEO4J_HOME"])
+    libexec.install Dir["cypher-shell{,.jar}"]
+    (bin/"cypher-shell").write_env_script libexec/"cypher-shell", Language::Java.overridable_java_home_env("11")
   end
 
   test do
